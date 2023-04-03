@@ -15,14 +15,38 @@ class Board:
     def handle_move(self, move, piece):
         initial = move.initial
         final = move.final
-        if piece.an_passant == True:
+        if piece.an_passant == True and piece.color =='white' :
             self.squares[initial.row][initial.col+1].piece = None
             self.squares[initial.row][initial.col].piece = None
             self.squares[final.row][final.col].piece = piece
             piece.clear_moves()
+
             piece.move_count += 1
             return
+        # elif piece.an_passant == True and piece.color =='white' and piece.an_passant_side == False:
+        #     self.squares[initial.row][initial.col-1].piece = None
+        #     self.squares[initial.row][initial.col].piece = None
+        #     self.squares[final.row][final.col].piece = piece
+        #     piece.clear_moves()
 
+        #     piece.move_count += 1
+        #     return
+        # elif piece.an_passant == True and piece.color =='black' and piece.an_passant_side ==False:
+        #     self.squares[initial.row][initial.col-1].piece = None
+        #     self.squares[initial.row][initial.col].piece = None
+        #     self.squares[final.row][final.col].piece = piece
+        #     piece.clear_moves()
+
+        #     piece.move_count += 1
+        #     return
+        # elif piece.an_passant == True and piece.color =='black' and piece.an_passant_side:
+        #     self.squares[initial.row][initial.col+1].piece = None
+        #     self.squares[initial.row][initial.col].piece = None
+        #     self.squares[final.row][final.col].piece = piece
+        #     piece.clear_moves()
+
+        #     piece.move_count += 1
+        #     return
         # piec  e = self.squares[initclickedRow][initclickedCol].piece
         # print(self.squares[0][0].piece)
         # self.squares[initclickedRow][initclickedRow].piece = Square(
@@ -33,6 +57,7 @@ class Board:
 
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
+        
         piece.moved = True
 
         # print(self.squares[initclickedRow][initclickedCol].piece)
@@ -40,7 +65,8 @@ class Board:
         # print(self.squares[clickedRow][clickedCol], piece)
         piece.clear_moves()
         piece.move_count += 1
-
+        if (piece.name == 'pawn'):
+            self.check_valid_moves(piece,final.row,final.col)
     def check_valid(self, piece, move):
         return move in piece.valid_moves
 
@@ -214,6 +240,7 @@ class Board:
                         break
 
         def pawn():
+            print(piece.move_count)
             if piece.moved:
                 if piece.color == 'white':
                     steps = row - 1
@@ -238,11 +265,15 @@ class Board:
                 (row-1, col+1),
 
             ]
-
+            an_passant_moves_black = [
+                (row+1,col-1),
+                (row+1,col+1)
+            ]
+#enemy piece moet nog nie beweeg het nie, as piece in row 3 kom moet daar niks links of regs wees nie
             # for rows in
             if piece.moved:
                 if piece.color == 'white':
-                    if row == 3:
+                    if row ==3 and piece.an_passant == False:
                         if self.squares[row][col+1].is_rival(piece.color):
 
                             thePiece = self.squares[row][col+1].piece
@@ -259,18 +290,110 @@ class Board:
                                     piece.add_moves(move)
                                     piece.moved = True
                                     piece.an_passant = True
+                                    piece.an_passant_side =  True
+                    #     elif self.squares[row][col-1].is_rival(piece.color):
+                    #         thePiece=self.squares[row][col-1].piece
+                    #         if thePiece.move_count ==1:
+                    #             possible_an_row,possbile_an_col = an_passant_moves_white[0]
+                    #             if not self.squares[possible_an_row][possbile_an_col].has_piece():
+                    #                 initial_row = Square(row, col)
+                    #                 final = Square(possible_an_row,
+                    #                               possbile_an_col)
+                    #                 move = Move(initial_row, final)
+                    #                 piece.add_moves(move)
+                    #                 piece.moved = True
+                    #                 piece.an_passant = True
+                    #                 piece.an_passant_side =  False
 
-                for possible_moves in possible_captures:
+                    # if row == 3:
+                    #     if self.squares[row][col+1].is_rival(piece.color):
+
+                    #         thePiece = self.squares[row][col+1].piece
+                    #         if thePiece.move_count == 1:
+                    #             # for possible_an in an_passant_moves_white:
+                    #             possible_an_row, possible_an_col = an_passant_moves_white[1]
+                    #             if not self.squares[possible_an_row][possible_an_col].has_piece():
+                    #                 # if self.squares[possible_an_row][possible_an_col].is_rival(piece.color):
+
+                    #                 initial_row = Square(row, col)
+                    #                 final = Square(possible_an_row,
+                    #                                possible_an_col)
+                    #                 move = Move(initial_row, final)
+                    #                 piece.add_moves(move)
+                    #                 piece.moved = True
+                    #                 piece.an_passant = True
+                    #                 piece.an_passant_side =  True
+                    #     elif self.squares[row][col-1].is_rival(piece.color):
+                    #         thePiece=self.squares[row][col-1].piece
+                    #         if thePiece.move_count ==1:
+                    #             possible_an_row,possbile_an_col = an_passant_moves_white[0]
+                    #             if not self.squares[possible_an_row][possbile_an_col].has_piece():
+                    #                 initial_row = Square(row, col)
+                    #                 final = Square(possible_an_row,
+                    #                               possbile_an_col)
+                    #                 move = Move(initial_row, final)
+                    #                 piece.add_moves(move)
+                    #                 piece.moved = True
+                    #                 piece.an_passant = True
+                    #                 piece.an_passant_side =  False
+        
+                # if piece.color == 'black':
+                #     if row == 4:
+                #         if self.squares[row][col+1].in_range():
+                #             if self.squares[row][col+1].is_rival(piece.color):
+
+                #                 thePiece = self.squares[row][col+1].piece
+                #                 if thePiece.move_count == 1:
+                #                     # for possible_an in an_passant_moves_white:
+                #                     possible_an_row, possible_an_col = an_passant_moves_black[1]
+                #                     if not self.squares[possible_an_row][possible_an_col].has_piece():
+                #                         # if self.squares[possible_an_row][possible_an_col].is_rival(piece.color):
+
+                #                         initial_row = Square(row, col)
+                #                         final = Square(possible_an_row,
+                #                                     possible_an_col)
+                #                         move = Move(initial_row, final)
+                #                         piece.add_moves(move)
+                #                         piece.moved = True
+                #                         piece.an_passant = True
+                #                         piece.an_passant_side =  True
+                #             elif self.squares[row][col-1].is_rival(piece.color):
+                #                 print('poweranger')
+                #                 thePiece=self.squares[row][col-1].piece
+                #                 if thePiece.move_count ==1:
+                #                     possible_an_row,possbile_asn_col = an_passant_moves_black[0]
+                #                     if not self.squares[possible_an_row][possbile_asn_col].has_piece():
+                #                         initial_row = Square(row, col)
+                #                         final = Square(possible_an_row,
+                #                                     possbile_asn_col)
+                #                         move = Move(initial_row, final)
+                #                         piece.add_moves(move)
+                #                         piece.moved = True
+                #                         piece.an_passant = True
+                #                         piece.an_passant_side =  False
+
+                for possible_moves in possible_captures: 
                     possible_move_row, possible_move_col = possible_moves
                     if Square.in_range(possible_move_row, possible_move_col):
                         if self.squares[possible_move_row][possible_move_col].is_rival(piece.color):
+                            if (piece.color =='white' and possible_move_row < row ):
 
-                            initial_row = Square(row, col)
-                            final = Square(possible_move_row,
-                                           possible_move_col)
-                            move = Move(initial_row, final)
-                            piece.add_moves(move)
-                            piece.moved = True
+                                initial_row = Square(row, col)
+                                final = Square(possible_move_row,
+                                            possible_move_col)
+                                move = Move(initial_row, final)
+                                piece.add_moves(move)
+                                piece.moved = True
+                        
+                            
+                            elif (piece.color =='black' and possible_move_row > row  ):
+
+                                initial_row = Square(row, col)
+                                final = Square(possible_move_row,
+                                            possible_move_col)
+                                move = Move(initial_row, final)
+                                piece.add_moves(move)
+                                piece.moved = True
                         else:
                             continue
                 if Square.in_range(steps, col):
@@ -279,7 +402,7 @@ class Board:
 
                             initial_row = Square(row, col)
                             final = Square(steps, col)
-                            move = Move(initial_row, final)
+                            move = Move(initial_row, final) 
                             piece.add_moves(move)
                             piece.moved = True
             else:
@@ -305,13 +428,13 @@ class Board:
                             move = Move(initial_row, final)
                             piece.add_moves(move)
                             piece.moved = True
-
+                            
                             initial_row = Square(row, col)
                             final = Square(steps2, col)
                             move = Move(initial_row, final)
                             piece.add_moves(move)
                             piece.moved = True
-
+                        
                         # an passant
 
         if piece.name == 'knight':
@@ -357,3 +480,4 @@ class Board:
             self.squares[white][pawns] = Square(1, pawns, Pawn('black'))
 
             self.squares[black][pawns] = Square(6, pawns, Pawn('white'))
+
