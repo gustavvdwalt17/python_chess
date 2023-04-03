@@ -13,7 +13,7 @@ class Piece:
         self.moved = False
         self.move_count = 0
         self.an_passant = False
-
+        self.an_passant_side = None
     def set_texture(self, size=80):
         self.texture = os.path.join(
             f'images/imgs-{size}px/{self.color}_{self.name}.png')
